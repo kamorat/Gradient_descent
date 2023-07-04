@@ -74,7 +74,7 @@ namespace Gradient_descent
             
             double r = CalculateDistance(x1, y1, z1, x2, y2, z2);
 
-            double energy = 4 * epsilon * (Math.Pow((sigma / r), 12) - Math.Pow((sigma / r), 6));
+            double energy = 4.0 * epsilon * (Math.Pow((sigma / r), 12) - Math.Pow((sigma / r), 6));
             return energy;
         }
 
@@ -173,7 +173,7 @@ namespace Gradient_descent
                 default:
                     throw new ArgumentException("Nieprawidłowa współrzędna.");
             }
-            //double f = 4 * ep * (Math.Pow((sigma / r), 12) - Math.Pow(sigma / r, 6));
+            
 
             return gradient;
 
@@ -220,7 +220,11 @@ namespace Gradient_descent
         static void Main(string[] args)
         {
 
+<<<<<<< HEAD
             string nazwapliku = "wsp(n=6,m=6)";
+=======
+            string nazwapliku = "wsp(n=6,m=0)";
+>>>>>>> Poprawa nazw plikow
             //POBIERANIE DANYCH Z PLIKÓW
             //nazwa pliku Excel
             string pathToExcelFile = @"C:\Users\Kamil\Desktop\Praca Magisterska\KOD\ConsoleApp1\"+nazwapliku+".xlsx";
@@ -285,8 +289,8 @@ namespace Gradient_descent
             double x1, y1, z1, x2, y2, z2;
             double energy;
 
-            double extraforce = 0.0;
-            int liczgrad = 0;
+            double extraforce = 0.0100; //Dodatkowa siła wzdłoz osi Z
+            int liczgrad = 1;
 
             for (int i = 0; i < numAtomsdwa; i++)
             {
@@ -305,13 +309,23 @@ namespace Gradient_descent
                 x2 = wspolrzedne[k1 - 1, 1];
                 y2 = wspolrzedne[k1 - 1, 2];
                 z2 = wspolrzedne[k1 - 1, 3];
-                if (liczgrad == 1) {
-                    GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations,0.0);
+                if (liczgrad == 1) 
+                {
+                    if (i < numAtomsdwa/2.0)
+                    {
+                        GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations, -extraforce);
                     }
+                    else
+                    {
+                        GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations, extraforce);
+                    }
+                 }
                     
-                    Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1 +'\n');
+                Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1 +'\n');
                 energy = CalculateEnergy(x1, y1, z1, x2, y2, z2);
                 //Console.WriteLine("Energia : " + energy + '\n');
+
+                //WPISANIE NOWYCH WSPOŁRZEDNYCH DO TALICY
                 wspolrzedne[s - 1, 1] = x1;
                 wspolrzedne[s - 1, 2] = y1;
                 wspolrzedne[s - 1, 3] = z1;
@@ -321,22 +335,33 @@ namespace Gradient_descent
                /* Console.Write("Siła X_: " + CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "x1")+'\t');
                 Console.Write("Siła Y_: " + CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "y1")+'\t');
                 Console.Write("Siła Z_: " + CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1")+'\t');
-                */Console.WriteLine();
+                Console.WriteLine();
+                */
                 sumasilX += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "x1");
                 sumasilY += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "y1");
                 sumasilZ += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1");
+                x1 = wspolrzedne[s - 1, 1];
+                y1 = wspolrzedne[s - 1, 2];
+                z1 = wspolrzedne[s - 1, 3];
                 x2 = wspolrzedne[k2 - 1, 1];
                 y2 = wspolrzedne[k2 - 1, 2];
                 z2 = wspolrzedne[k2 - 1, 3];
                 if (liczgrad == 1)
                 {
-                    //GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations,0.0);
+                    if (i < numAtomsdwa/2.0)
+                    {
+                        GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations, extraforce);
+                    }
+                    else
+                    {
+                        GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations, -extraforce);
+                    }
                 }
                     Console.WriteLine("DLA " + s +" x " + x1 + " y " + y1 + " z " + z1 + '\n');
 
                 energy = CalculateEnergy(x1, y1, z1, x2, y2, z2);
-                //Console.WriteLine("Energia : " + energy + '\n');
-
+               // Console.WriteLine("Energia : " + energy + '\n');
+                //WPISANIE NOWYCH WSPOŁRZEDNYCH DO TALICY
                 wspolrzedne[k2 - 1, 1] = x2;
                 wspolrzedne[k2 - 1, 2] = y2;
                 wspolrzedne[k2 - 1, 3] = z2;
@@ -379,11 +404,13 @@ namespace Gradient_descent
                 z2 = wspolrzedne[k1 - 1, 3];
                 if (liczgrad == 1)
                 {
+                    
                     GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations,0.0);
                 }
                     Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1+ '\n');
                 energy = CalculateEnergy(x1, y1, z1, x2, y2, z2);
                 //Console.WriteLine("Energia : " + energy + '\n');
+                //WPISANIE NOWYCH WSPOŁRZEDNYCH DO TALICY
                 wspolrzedne[s - 1, 1] = x1;
                 wspolrzedne[s - 1, 2] = y1;
                 wspolrzedne[s - 1, 3] = z1;
@@ -395,7 +422,9 @@ namespace Gradient_descent
                 sumasilZ += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1");
 
 
-
+                x1 = wspolrzedne[s - 1, 1];
+                y1 = wspolrzedne[s - 1, 2];
+                z1 = wspolrzedne[s - 1, 3];
                 x2 = wspolrzedne[k2 - 1, 1];
                 y2 = wspolrzedne[k2 - 1, 2];
                 z2 = wspolrzedne[k2 - 1, 3];
@@ -414,6 +443,9 @@ namespace Gradient_descent
                 sumasilZ += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1");
 
 
+                x1 = wspolrzedne[s - 1, 1];
+                y1 = wspolrzedne[s - 1, 2];
+                z1 = wspolrzedne[s - 1, 3];
                 x2 = wspolrzedne[k3 - 1, 1];
                 y2 = wspolrzedne[k3 - 1, 2];
                 z2 = wspolrzedne[k3 - 1, 3];
