@@ -14,6 +14,9 @@ namespace Gradient_descent
 
     class Program
     {
+
+        static double sigma = 0.3534;
+        static double epsilon = 0.2906;
         static double[,] CombineArrays(double[] array1, double[] array2, double[] array3, double[] array4)
         {
             // Określ długość najdłuższej tablicy
@@ -68,11 +71,10 @@ namespace Gradient_descent
         }
         static double CalculateEnergy(double x1, double y1, double z1, double x2, double y2, double z2)
         {
-            double ep = 1.0; // Głębokość potencjału
-            double sigma = 1.0;
+            
             double r = CalculateDistance(x1, y1, z1, x2, y2, z2);
 
-            double energy = 4 * ep * (Math.Pow((sigma / r), 12) - Math.Pow((sigma / r), 6));
+            double energy = 4 * epsilon * (Math.Pow((sigma / r), 12) - Math.Pow((sigma / r), 6));
             return energy;
         }
 
@@ -134,35 +136,36 @@ namespace Gradient_descent
         }
         static double GradientPotentialLJ_Z(double x1, double x2, double sigma, double r, double ep,double extraforce)
         {
-            return (((48 * ep) / Math.Pow(sigma, 2)) * (Math.Pow((sigma / r), 14) - 0.5 * Math.Pow((sigma / r), 8)) * (x1 - x2))+extraforce;
+            
+                return (((48 * ep) / Math.Pow(sigma, 2)) * (Math.Pow((sigma / r), 14) - 0.5 * Math.Pow((sigma / r), 8)) * (x1 - x2)) + extraforce;
+                 
 
         }
         static double gradient(double x1, double x2, double y1, double y2, double z1, double z2, string wsp,double extraforce)
         {
-            double ep = 1.0; // Głębokość potencjału
-            double sigma = 1.0;
+            
             double r = CalculateDistance(x1, y1, z1, x2, y2, z2);
             double gradient;
 
             switch (wsp)
             {
                 case "x1":
-                    gradient = -GradientPotentialLJ(x1, x2, sigma, r, ep);
+                    gradient = -GradientPotentialLJ(x1, x2,sigma, r, epsilon );
                     break;
                 case "y1":
-                    gradient = -GradientPotentialLJ(y1, y2, sigma, r, ep);
+                    gradient = -GradientPotentialLJ(y1, y2, sigma, r, epsilon);
                     break;
                 case "z1":
-                    gradient = -GradientPotentialLJ_Z(z1, z2, sigma, r, ep, extraforce);
+                    gradient = -GradientPotentialLJ_Z(z1, z2, sigma, r, epsilon, extraforce);
                     break;
                 case "x2":
-                    gradient = -GradientPotentialLJ(x2, x1, sigma, r, ep);
+                    gradient = -GradientPotentialLJ(x2, x1, sigma, r, epsilon);
                     break;
                 case "y2":
-                    gradient = -GradientPotentialLJ(y2, y1, sigma, r, ep);
+                    gradient = -GradientPotentialLJ(y2, y1, sigma, r, epsilon);
                     break;
                 case "z2":
-                    gradient = -GradientPotentialLJ_Z(z2, z1, sigma, r, ep, extraforce);
+                    gradient = -GradientPotentialLJ_Z(z2, z1, sigma, r, epsilon, extraforce);
                     break;
 
 
@@ -176,36 +179,39 @@ namespace Gradient_descent
 
         }
 
-        public static double[,] CalculateTotalFroces(double[,]wspolrzedne,double epsilon,double sigma,double extraforce)
+        public static double CalculateTotalFroces(double x1,double x2,double y1,double y2,double z1,double z2,double epsilon,double sigma,double extraforce, string wsp)
         {
-            int numAtoms = wspolrzedne.GetLength(0);
-            double[,] temp = new double[numAtoms, 4];
-            double x1, x2, y1, y2, z1, z2,distance,forceX,forceY,forceZ;
-            for(int i = 0; i < numAtoms; i++)
+            double r = CalculateDistance(x1, y1, z1, x2, y2, z2);
+            double force;
+            
+            switch (wsp)
             {
-                x1 = wspolrzedne[i, 1];
-                y1 = wspolrzedne[i, 2];
-                z1 = wspolrzedne[i, 3];
-                temp[i, 0] = i + 1;
-                for(int j = 0; j < numAtoms; j++)
-                {
-                    if (i != j)
-                    {
-                        x2 = wspolrzedne[j, 1];
-                        y2 = wspolrzedne[j, 2];
-                        z2 = wspolrzedne[j, 3];
-                        distance = CalculateDistance(x1, y1, z1, x2, y2, z2);
-                        forceX = GradientPotentialLJ(x1, x2, sigma, distance, epsilon);
-                        forceY = GradientPotentialLJ(y1, y2, sigma, distance, epsilon);
-                        forceZ = GradientPotentialLJ_Z(z1, z2, sigma, distance, epsilon, extraforce);
-                        temp[i, 1] = temp[i, 1] + forceX;
-                        temp[i, 2] = temp[i, 2] + forceY;
-                        temp[i, 3] = temp[i, 3] + forceZ;
-                    }
+                case "x1":
+                    force = -GradientPotentialLJ(x1, x2, sigma, r, epsilon);
+                    break;
+                case "y1":
+                    force = -GradientPotentialLJ(y1, y2, sigma, r, epsilon);
+                    break;
+                case "z1":
+                    force = -GradientPotentialLJ_Z(z1, z2, sigma, r, epsilon, extraforce);
+                    break;
+                case "x2":
+                    force = -GradientPotentialLJ(x2, x1, sigma, r, epsilon);
+                    break;
+                case "y2":
+                    force = -GradientPotentialLJ(y2, y1, sigma, r, epsilon);
+                    break;
+                case "z2":
+                    force = -GradientPotentialLJ_Z(z2, z1, sigma, r, epsilon, extraforce);
+                    break;
 
-                }
+
+
+                default:
+                    throw new ArgumentException("Nieprawidłowa współrzędna.");
             }
-            return temp;
+
+            return force;
             
         }
             
@@ -213,9 +219,11 @@ namespace Gradient_descent
 
         static void Main(string[] args)
         {
+
+            string nazwapliku = "wsp(n=6,m=0)1";
             //POBIERANIE DANYCH Z PLIKÓW
             //nazwa pliku Excel
-            string pathToExcelFile = @"C:\Users\Kamil\Desktop\Praca Magisterska\KOD\ConsoleApp1\wsp(n=6,m=0)1.xlsx";
+            string pathToExcelFile = @"C:\Users\Kamil\Desktop\Praca Magisterska\KOD\ConsoleApp1\"+nazwapliku+".xlsx";
 
             //nazwa arkusza
             string sheetName = "wspolrzedne";
@@ -270,16 +278,22 @@ namespace Gradient_descent
             // Maksymalna liczba iteracji
             int maxIterations = 1000000;
 
-
+            string filePath = @"C:\Users\Kamil\Desktop\Praca Magisterska\KOD\ConsoleApp1\force_"+nazwapliku+".txt";
+            string data;
             int numAtomsdwa = datadwoch.GetLength(0);
             int k1, k2, k3, s;
             double x1, y1, z1, x2, y2, z2;
             double energy;
 
-
+            double extraforce = 0.0;
+            int liczgrad = 0;
 
             for (int i = 0; i < numAtomsdwa; i++)
             {
+                double sumasilX = 0.0;
+                double sumasilY = 0.0;
+                double sumasilZ = 0.0;
+                    
 
                 s = datadwoch[i, 0];
                 k1 = datadwoch[i, 1];
@@ -291,29 +305,67 @@ namespace Gradient_descent
                 x2 = wspolrzedne[k1 - 1, 1];
                 y2 = wspolrzedne[k1 - 1, 2];
                 z2 = wspolrzedne[k1 - 1, 3];
-
-                //GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations);
-                // Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1 +'\n');
+                if (liczgrad == 1) {
+                    GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations,0.0);
+                    }
+                    
+                    Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1 +'\n');
                 energy = CalculateEnergy(x1, y1, z1, x2, y2, z2);
-                Console.WriteLine("Energia : " + energy + '\n');
-             
-
+                //Console.WriteLine("Energia : " + energy + '\n');
+                wspolrzedne[s - 1, 1] = x1;
+                wspolrzedne[s - 1, 2] = y1;
+                wspolrzedne[s - 1, 3] = z1;
+                wspolrzedne[k1 - 1, 1] = x2;
+                wspolrzedne[k1 - 1, 2] = y2;
+                wspolrzedne[k1 - 1, 3] = z2;
+               /* Console.Write("Siła X_: " + CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "x1")+'\t');
+                Console.Write("Siła Y_: " + CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "y1")+'\t');
+                Console.Write("Siła Z_: " + CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1")+'\t');
+                */Console.WriteLine();
+                sumasilX += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "x1");
+                sumasilY += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "y1");
+                sumasilZ += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1");
                 x2 = wspolrzedne[k2 - 1, 1];
                 y2 = wspolrzedne[k2 - 1, 2];
                 z2 = wspolrzedne[k2 - 1, 3];
-                //   GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations);
-                //  Console.WriteLine("DLA " + s +" x " + x1 + " y " + y1 + " z " + z1 + '\n');
+                if (liczgrad == 1)
+                {
+                    //GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations,0.0);
+                }
+                    Console.WriteLine("DLA " + s +" x " + x1 + " y " + y1 + " z " + z1 + '\n');
 
                 energy = CalculateEnergy(x1, y1, z1, x2, y2, z2);
-                Console.WriteLine("Energia : " + energy + '\n');
+                //Console.WriteLine("Energia : " + energy + '\n');
 
-                
+                wspolrzedne[k2 - 1, 1] = x2;
+                wspolrzedne[k2 - 1, 2] = y2;
+                wspolrzedne[k2 - 1, 3] = z2;
 
+               /* Console.Write("Siła X_: " + CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "x1") + '\t');
+                Console.Write("Siła Y_: " + CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "y1") + '\t');
+                Console.Write("Siła Z_: " + CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1") + '\t');
+                Console.WriteLine();*/
+                sumasilX += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "x1");
+                sumasilY += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "y1");
+                sumasilZ += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1");
+
+
+                Console.WriteLine("Suma sił X= " + sumasilX + " Suma sil Y= " + sumasilY + " Suma sil Z= " + sumasilZ + '\n');
+                Console.WriteLine("Pierwiastek sumy kwadratów=" + Math.Sqrt(Math.Pow(sumasilX, 2) + Math.Pow(sumasilY, 2) + Math.Pow(sumasilZ, 2)) + '\n');
+                data = "DLA "+ s + " Pierwiastek sumy kwadratów=" + Math.Sqrt(Math.Pow(sumasilX, 2) + Math.Pow(sumasilY, 2) + Math.Pow(sumasilZ, 2)) + '\n';
+                using (StreamWriter sw = File.AppendText(filePath))
+                {
+                    sw.WriteLine(data);
+                }
 
             }
             int numAtomstrzy = datatrzech.GetLength(0);
             for (int j = 0; j < numAtomstrzy; j++)
             {
+                double sumasilX = 0.0;
+                double sumasilY = 0.0;
+                double sumasilZ = 0.0;
+
                 s = datatrzech[j, 0];
                 k1 = datatrzech[j, 1];
                 k2 = datatrzech[j, 2];
@@ -325,49 +377,71 @@ namespace Gradient_descent
                 x2 = wspolrzedne[k1 - 1, 1];
                 y2 = wspolrzedne[k1 - 1, 2];
                 z2 = wspolrzedne[k1 - 1, 3];
-                //GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations);
-                //Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1+ '\n');
+                if (liczgrad == 1)
+                {
+                    GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations,0.0);
+                }
+                    Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1+ '\n');
                 energy = CalculateEnergy(x1, y1, z1, x2, y2, z2);
-                Console.WriteLine("Energia : " + energy + '\n');
-               
+                //Console.WriteLine("Energia : " + energy + '\n');
+                wspolrzedne[s - 1, 1] = x1;
+                wspolrzedne[s - 1, 2] = y1;
+                wspolrzedne[s - 1, 3] = z1;
+                wspolrzedne[k1 - 1, 1] = x2;
+                wspolrzedne[k1 - 1, 2] = y2;
+                wspolrzedne[k1 - 1, 3] = z2;
+                sumasilX += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "x1");
+                sumasilY += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "y1");
+                sumasilZ += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1");
+
 
 
                 x2 = wspolrzedne[k2 - 1, 1];
                 y2 = wspolrzedne[k2 - 1, 2];
                 z2 = wspolrzedne[k2 - 1, 3];
-                // GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations);
-                //Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1+ '\n');
+                if (liczgrad == 1)
+                {
+                    GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations,0.0);
+                }
+                    Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1+ '\n');
                 energy = CalculateEnergy(x1, y1, z1, x2, y2, z2);
-                Console.WriteLine("Energia : " + energy + '\n');
-                
+                //Console.WriteLine("Energia : " + energy + '\n');
+                wspolrzedne[k2 - 1, 1] = x2;
+                wspolrzedne[k2 - 1, 2] = y2;
+                wspolrzedne[k2 - 1, 3] = z2;
+                sumasilX += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "x1");
+                sumasilY += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "y1");
+                sumasilZ += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1");
+
 
                 x2 = wspolrzedne[k3 - 1, 1];
                 y2 = wspolrzedne[k3 - 1, 2];
                 z2 = wspolrzedne[k3 - 1, 3];
-
-                // GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations);
-                //Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1 + '\n');
+                if (liczgrad == 1)
+                {
+                    GradientDescent(ref x1, ref y1, ref z1, ref x2, ref y2, ref z2, learningRate, maxIterations,0.0);
+                }
+                    Console.WriteLine("DLA " + s + " x " + x1 + " y " + y1 + " z " + z1 + '\n');
 
                 energy = CalculateEnergy(x1, y1, z1, x2, y2, z2);
-                Console.WriteLine("Energia : " + energy + '\n');
-                
+                //Console.WriteLine("Energia : " + energy + '\n');
+                wspolrzedne[k3 - 1, 1] = x2;
+                wspolrzedne[k3 - 1, 2] = y2;
+                wspolrzedne[k3 - 1, 3] = z2;
+                sumasilX += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "x1");
+                sumasilY += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "y1");
+                sumasilZ += CalculateTotalFroces(x1, x2, y1, y2, z1, z2, epsilon, sigma, extraforce, "z1");
+                Console.WriteLine("Suma sił X= " + sumasilX + " Suma sil Y= " + sumasilY + " Suma sil Z= " + sumasilZ + '\n');
 
-            }
-
-            double extraforce = 0.0;
-            double[,] temp = CalculateTotalFroces(wspolrzedne, 1.0, 1.0, extraforce);
-
-            for (int i = 0; i < temp.GetLength(0); i++)
-            {
-                for (int j = 0; j < temp.GetLength(1); j++)
+                Console.WriteLine("Pierwiastek sumy kwadratów=" + Math.Sqrt(Math.Pow(sumasilX, 2) + Math.Pow(sumasilY, 2) + Math.Pow(sumasilZ, 2))+'\n');
+                data = "DLA " + s + " Pierwiastek sumy kwadratów=" + Math.Sqrt(Math.Pow(sumasilX, 2) + Math.Pow(sumasilY, 2) + Math.Pow(sumasilZ, 2)) + '\n';
+                using (StreamWriter sw = File.AppendText(filePath))
                 {
-                    Console.Write(temp[i, j] + "\t");
+                    sw.WriteLine(data);
                 }
-                Console.WriteLine();
+
+
             }
-
-
-
 
         }
         }
