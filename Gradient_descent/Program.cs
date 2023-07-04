@@ -220,7 +220,7 @@ namespace Gradient_descent
         static void Main(string[] args)
         {
 
-            string nazwapliku = "wsp(n=6,m=0)1";
+            string nazwapliku = "wsp(n=6,m=6)";
             //POBIERANIE DANYCH Z PLIKÓW
             //nazwa pliku Excel
             string pathToExcelFile = @"C:\Users\Kamil\Desktop\Praca Magisterska\KOD\ConsoleApp1\"+nazwapliku+".xlsx";
@@ -266,8 +266,8 @@ namespace Gradient_descent
             excelApp.Quit();
             Marshal.ReleaseComObject(excelApp);
             double[,] wspolrzedne = CombineArrays(index, datax, datay, dataz);
-            string trzechs = @"C:\Users\Kamil\Desktop\Praca Magisterska\KOD\ConsoleApp1\trzechs.txt"; // Ścieżka do pliku tekstowego
-            string dwochs = @"C:\Users\Kamil\Desktop\Praca Magisterska\KOD\ConsoleApp1\dwochs.txt";
+            string trzechs = @"C:\Users\Kamil\Desktop\Praca Magisterska\KOD\ConsoleApp1\trzechs_" + nazwapliku + ".txt"; // Ścieżka do pliku tekstowego
+            string dwochs = @"C:\Users\Kamil\Desktop\Praca Magisterska\KOD\ConsoleApp1\dwochs_" + nazwapliku + ".txt";
             int[,] datadwoch = ReadDataFromFile(dwochs);
             int[,] datatrzech = ReadDataFromFile(trzechs);
             // KONIEC POBIERANIA DANYCH Z PLIKÓW
@@ -442,6 +442,7 @@ namespace Gradient_descent
 
 
             }
+            Console.ReadLine();
 
         }
         }
