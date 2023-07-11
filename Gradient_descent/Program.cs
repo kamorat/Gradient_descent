@@ -15,8 +15,8 @@ namespace Gradient_descent
     class Program
     {
 
-        static double sigma = 0.3534;
-        static double epsilon = 0.2906;
+        static double sigma = 0.3534; //nm
+        static double epsilon = 0.2906;  //kJ/mol -1 == 0,03566 eV
         static double[,] CombineArrays(double[] array1, double[] array2, double[] array3, double[] array4)
         {
             // Określ długość najdłuższej tablicy
@@ -280,7 +280,7 @@ namespace Gradient_descent
             double learningRate = 0.00000001;
 
             // Maksymalna liczba iteracji
-            int maxIterations = 1000000;
+            int maxIterations = 10000000;
 
             string filePath = @"C:\Users\Kamil\Desktop\Praca Magisterska\KOD\ConsoleApp1\force_"+nazwapliku+".txt";
             string data;
@@ -289,7 +289,7 @@ namespace Gradient_descent
             double x1, y1, z1, x2, y2, z2;
             double energy;
 
-            double extraforce = 0.0100; //Dodatkowa siła wzdłoz osi Z
+            double extraforce = 0.000100; //Dodatkowa siła wzdłoz osi Z
             int liczgrad = 1;
 
             for (int i = 0; i < numAtomsdwa; i++)
