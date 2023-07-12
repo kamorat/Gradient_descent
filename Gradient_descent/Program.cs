@@ -93,56 +93,8 @@ namespace Gradient_descent
             return ((48 * ep) / Math.Pow(sigma, 2)) * (Math.Pow((sigma / r), 14) - 0.5 * Math.Pow((sigma / r), 8)) * (x1 - x2);
 
         }
-        static double GradientPotentialLJ_Z(double x1, double x2, double sigma, double r, double ep,double extraforce)
-        {
-            
-                return (((48 * ep) / Math.Pow(sigma, 2)) * (Math.Pow((sigma / r), 14) - 0.5 * Math.Pow((sigma / r), 8)) * (x1 - x2)) + extraforce;
-                 
 
-        }
-        static double gradient(double x1, double x2, double y1, double y2, double z1, double z2, string wsp,double extraforce)
-        {
-            
-            double r = CalculateDistance(x1, y1, z1, x2, y2, z2);
-            double gradient=0.0;
-
-            switch (wsp)
-            {
-                case "x1":
-                    gradient = GradientPotentialLJ(x1, x2,sigma, r, epsilon );
-                    break;
-                case "y1":
-                    gradient = GradientPotentialLJ(y1, y2, sigma, r, epsilon);
-                    break;
-                case "z1":
-                    gradient =GradientPotentialLJ_Z(z1, z2, sigma, r, epsilon, extraforce);
-                    break;
-                case "x2":
-                    gradient = GradientPotentialLJ(x2, x1, sigma, r, epsilon);
-                    break;
-                case "y2":
-                    gradient = GradientPotentialLJ(y2, y1, sigma, r, epsilon);
-                    break;
-                case "z2":
-                    gradient = GradientPotentialLJ_Z(z2, z1, sigma, r, epsilon, extraforce);
-                    break;
-
-
-
-                default:
-                    throw new ArgumentException("Nieprawidłowa współrzędna.");
-            }
-            
-
-            return gradient;
-
-        }
-
-    
-
-
-
-
+ 
         static void Main(string[] args)
         {
 
